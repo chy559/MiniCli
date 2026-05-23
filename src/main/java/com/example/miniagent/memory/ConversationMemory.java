@@ -7,19 +7,19 @@ import java.util.List;
 public class ConversationMemory {
     private final List<MemoryEntry> entries = new ArrayList<>();
 
-    public void add(MemoryEntry entry) {
+    public synchronized void add(MemoryEntry entry) {
         entries.add(entry);
     }
 
-    public List<MemoryEntry> entries() {
-        return Collections.unmodifiableList(entries);
+    public synchronized List<MemoryEntry> entries() {
+        return Collections.unmodifiableList(new ArrayList<>(entries));
     }
 
-    public int totalTokenEstimate() {
+    public synchronized int totalTokenEstimate() {
         return entries.stream().mapToInt(MemoryEntry::getTokenEstimate).sum();
     }
 
-    public void replaceAll(List<MemoryEntry> replacement) {
+    public synchronized void replaceAll(List<MemoryEntry> replacement) {
         entries.clear();
         entries.addAll(replacement);
     }

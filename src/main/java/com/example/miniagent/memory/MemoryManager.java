@@ -37,17 +37,17 @@ public class MemoryManager {
         this.retainRecentRounds = Math.max(0, retainRecentRounds);
     }
 
-    public void addUserMessage(String userInput) {
+    public synchronized void addUserMessage(String userInput) {
         conversationMemory.add(new MemoryEntry(userInput, MemoryType.CONVERSATION, Map.of("role", "user"), estimateTokens(userInput), System.currentTimeMillis()));
         compressShortTermMemoryIfNeeded();
     }
 
-    public void addAssistantMessage(String assistantOutput) {
+    public synchronized void addAssistantMessage(String assistantOutput) {
         conversationMemory.add(new MemoryEntry(assistantOutput, MemoryType.CONVERSATION, Map.of("role", "assistant"), estimateTokens(assistantOutput), System.currentTimeMillis()));
         compressShortTermMemoryIfNeeded();
     }
 
-    public void addToolResult(String toolName, String toolContent) {
+    public synchronized void addToolResult(String toolName, String toolContent) {
         String summary = truncate(toolContent, 500);
         conversationMemory.add(new MemoryEntry(summary, MemoryType.TOOL_RESULT, Map.of("tool", toolName), estimateTokens(summary), System.currentTimeMillis()));
         compressShortTermMemoryIfNeeded();
@@ -73,7 +73,7 @@ public class MemoryManager {
         longTermMemoryStore.clear();
     }
 
-    public String describeStatus() {
+    public synchronized String describeStatus() {
         return """
                 Memory status
                 - short-term entries: %d

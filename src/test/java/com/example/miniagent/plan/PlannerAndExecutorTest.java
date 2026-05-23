@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -97,6 +98,42 @@ class PlannerAndExecutorTest {
         assertTrue(result.contains("t2 [COMPLETED]: result-2"));
     }
 
+    @Test
+    void shouldExecuteIndependentPlanTasksConcurrently() {
+        Planner planner = new Planner(new QueueLlmClient("""
+                {
+                  "summary": "Execute independent tasks",
+                  "tasks": [
+                    {"id":"t1","description":"first","type":"ANALYSIS","dependencies":[]},
+                    {"id":"t2","description":"second","type":"ANALYSIS","dependencies":[]},
+                    {"id":"t3","description":"third","type":"VERIFICATION","dependencies":["t1","t2"]}
+                  ]
+                }
+                """), new PromptAssembler(new PromptRepository()));
+        AtomicInteger active = new AtomicInteger();
+        AtomicInteger maxActive = new AtomicInteger();
+        Agent agent = new SleepingAgent(memoryManager(), active, maxActive);
+
+        PlanExecuteAgent executor = new PlanExecuteAgent(planner, agent);
+        String result = executor.run("do work");
+
+        assertTrue(maxActive.get() > 1);
+        assertTrue(result.contains("t1 [COMPLETED]: result-first"));
+        assertTrue(result.contains("t2 [COMPLETED]: result-second"));
+        assertTrue(result.contains("t3 [COMPLETED]: result-third"));
+    }
+
+    private MemoryManager memoryManager() {
+        return new MemoryManager(
+                new ConversationMemory(),
+                new LongTermMemoryStore(tempDir.resolve("memory.json")),
+                new MemoryRetriever(),
+                new ContextCompressor(),
+                100,
+                500
+        );
+    }
+
     private static class QueueLlmClient implements LlmClient {
         private final Queue<ChatResponse> responses = new ArrayDeque<>();
 
@@ -109,6 +146,32 @@ class PlannerAndExecutorTest {
         @Override
         public ChatResponse chat(List<ChatMessage> conversationHistory, List<ToolDefinition> toolDefinitions) {
             return responses.remove();
+        }
+    }
+
+    private static class SleepingAgent extends Agent {
+        private final AtomicInteger active;
+        private final AtomicInteger maxActive;
+
+        private SleepingAgent(MemoryManager memoryManager, AtomicInteger active, AtomicInteger maxActive) {
+            super(new QueueLlmClient(), new ToolRegistry(), memoryManager, new PromptAssembler(new PromptRepository()), 4, 500);
+            this.active = active;
+            this.maxActive = maxActive;
+        }
+
+        @Override
+        public String runWithInstruction(String userInput, String overrideInstruction) {
+            int running = active.incrementAndGet();
+            maxActive.updateAndGet(previous -> Math.max(previous, running));
+            try {
+                Thread.sleep(150);
+                return "result-" + userInput;
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException("interrupted", e);
+            } finally {
+                active.decrementAndGet();
+            }
         }
     }
 }
