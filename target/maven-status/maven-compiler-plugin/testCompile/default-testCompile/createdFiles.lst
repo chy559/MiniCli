@@ -1,0 +1,6 @@
+com\example\miniagent\plan\PlannerAndExecutorTest.class
+com\example\miniagent\agent\AgentTest.class
+com\example\miniagent\memory\MemoryManagerTest.class
+com\example\miniagent\agent\AgentTest$StubLlmClient.class
+com\example\miniagent\plan\PlannerAndExecutorTest$QueueLlmClient.class
+com\example\miniagent\cli\CommandParserTest.class
