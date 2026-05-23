@@ -36,7 +36,8 @@ public class Main {
                 new MemoryRetriever(),
                 new ContextCompressor(),
                 4_000,
-                10_000
+                10_000,
+                2
         );
 
         ToolRegistry toolRegistry = new ToolRegistry();

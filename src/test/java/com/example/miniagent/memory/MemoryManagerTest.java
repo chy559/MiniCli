@@ -49,6 +49,30 @@ class MemoryManagerTest {
     }
 
     @Test
+    void shouldCompressOldMessagesWithMapReduceAndRetainRecentRounds() {
+        MemoryManager manager = new MemoryManager(
+                new ConversationMemory(),
+                new LongTermMemoryStore(tempDir.resolve("memory.json")),
+                new MemoryRetriever(),
+                new ContextCompressor(),
+                20,
+                500,
+                2
+        );
+
+        for (int i = 1; i <= 4; i++) {
+            manager.addUserMessage("user round " + i + " with important detail " + i);
+            manager.addAssistantMessage("assistant round " + i);
+        }
+
+        assertEquals(MemoryType.SUMMARY, manager.conversationMemory().entries().get(0).getType());
+        assertTrue(manager.conversationMemory().entries().get(0).getContent().contains("map-reduce"));
+        assertTrue(manager.conversationMemory().entries().get(0).getContent().contains("important detail 1"));
+        assertTrue(manager.conversationMemory().entries().stream().anyMatch(entry -> entry.getContent().contains("user round 3")));
+        assertTrue(manager.conversationMemory().entries().stream().anyMatch(entry -> entry.getContent().contains("assistant round 4")));
+    }
+
+    @Test
     void shouldClearLongTermMemory() {
         MemoryManager manager = new MemoryManager(
                 new ConversationMemory(),

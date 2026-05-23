@@ -10,6 +10,7 @@ public class MemoryManager {
     private final ContextCompressor contextCompressor;
     private final int shortTermTokenBudget;
     private final int historyTokenBudget;
+    private final int retainRecentRounds;
 
     public MemoryManager(ConversationMemory conversationMemory,
                          LongTermMemoryStore longTermMemoryStore,
@@ -17,12 +18,23 @@ public class MemoryManager {
                          ContextCompressor contextCompressor,
                          int shortTermTokenBudget,
                          int historyTokenBudget) {
+        this(conversationMemory, longTermMemoryStore, memoryRetriever, contextCompressor, shortTermTokenBudget, historyTokenBudget, 2);
+    }
+
+    public MemoryManager(ConversationMemory conversationMemory,
+                         LongTermMemoryStore longTermMemoryStore,
+                         MemoryRetriever memoryRetriever,
+                         ContextCompressor contextCompressor,
+                         int shortTermTokenBudget,
+                         int historyTokenBudget,
+                         int retainRecentRounds) {
         this.conversationMemory = conversationMemory;
         this.longTermMemoryStore = longTermMemoryStore;
         this.memoryRetriever = memoryRetriever;
         this.contextCompressor = contextCompressor;
         this.shortTermTokenBudget = shortTermTokenBudget;
         this.historyTokenBudget = historyTokenBudget;
+        this.retainRecentRounds = Math.max(0, retainRecentRounds);
     }
 
     public void addUserMessage(String userInput) {
@@ -69,12 +81,14 @@ public class MemoryManager {
                 - short-term token estimate: %d
                 - short-term compression threshold: %d
                 - history token budget: %d
+                - retain recent rounds: %d
                 """.formatted(
                 conversationMemory.entries().size(),
                 longTermMemoryStore.loadAll().size(),
                 conversationMemory.totalTokenEstimate(),
                 shortTermTokenBudget,
-                historyTokenBudget
+                historyTokenBudget,
+                retainRecentRounds
         ).trim();
     }
 
@@ -95,12 +109,37 @@ public class MemoryManager {
             return;
         }
         List<MemoryEntry> entries = conversationMemory.entries();
-        int keepRecent = 4;
-        List<MemoryEntry> older = new java.util.ArrayList<>(entries.subList(0, entries.size() - keepRecent));
-        List<MemoryEntry> recent = new java.util.ArrayList<>(entries.subList(entries.size() - keepRecent, entries.size()));
+        int retainFromIndex = findRetainFromIndex(entries);
+        if (retainFromIndex <= 0) {
+            return;
+        }
+
+        List<MemoryEntry> older = new java.util.ArrayList<>(entries.subList(0, retainFromIndex));
+        List<MemoryEntry> recent = new java.util.ArrayList<>(entries.subList(retainFromIndex, entries.size()));
         MemoryEntry summary = contextCompressor.compressShortTermMemory(older);
         conversationMemory.replaceAll(new java.util.ArrayList<>(List.of(summary)));
         recent.forEach(conversationMemory::add);
+    }
+
+    private int findRetainFromIndex(List<MemoryEntry> entries) {
+        if (retainRecentRounds == 0) {
+            return entries.size();
+        }
+
+        int roundsSeen = 0;
+        for (int i = entries.size() - 1; i >= 0; i--) {
+            if (isUserConversation(entries.get(i))) {
+                roundsSeen++;
+                if (roundsSeen == retainRecentRounds) {
+                    return i;
+                }
+            }
+        }
+        return 0;
+    }
+
+    private boolean isUserConversation(MemoryEntry entry) {
+        return entry.getType() == MemoryType.CONVERSATION && "user".equals(entry.getMetadata().get("role"));
     }
 
     private int estimateTokens(String text) {
