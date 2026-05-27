@@ -18,12 +18,12 @@ base ReAct system prompt
 
 relevant long-term memory, if any
 
-relevant codebase RAG context, if indexed and matching
-
 override instruction, only for plan task execution
 ```
 
-Important: short-term `ConversationMemory` is not dumped into every LLM call. The active `conversationHistory` is a per-run ReAct message list. Codebase RAG context is retrieved separately from SQLite-backed chunks.
+Important: short-term `ConversationMemory` is not dumped into every LLM call. The active `conversationHistory` is a per-run ReAct message list. Long-term memory retrieval results may be injected into the system prompt; short-term memory entries are not automatically replayed.
+
+Codebase RAG is not automatically retrieved before normal ReAct prompt construction. The LLM receives `search_code` and `index_code` tool definitions and may call them when it needs repository evidence. CLI commands such as `/rag search <query>` can also search RAG directly.
 
 ## Tool Loop Context
 
@@ -66,7 +66,7 @@ Do not confuse this with short-term memory compression. Conversation history com
 taskExecutorAgent.runWithInstruction(task.getDescription(), overrideInstruction)
 ```
 
-That means task execution still uses ReAct, tools, memory retrieval, and context compression, but gets an extra instruction telling the model to stay within the current task.
+That means task execution still uses ReAct, tools, long-term memory retrieval, and context compression, but gets an extra instruction telling the model to stay within the current task.
 
 ## Prompt Editing Guidelines
 

@@ -14,6 +14,9 @@ Registered in `Main`:
 - `write_file`
 - `list_dir`
 - `execute_command`
+- `save_memory`
+- `search_code`
+- `index_code`
 
 Each tool owns:
 
@@ -52,6 +55,10 @@ truncated result -> short-term memory TOOL_RESULT
 ```
 
 This means the current ReAct loop can still reason from the full observation, while session memory keeps a bounded version.
+
+`save_memory` is the exception that intentionally writes long-term memory. It should be called only when the user explicitly asks the CLI to remember a stable fact, preference, or project convention.
+
+`search_code` and `index_code` are RAG tools. `search_code` reads from the SQLite-backed code index; `index_code` rebuilds that index for the current workspace.
 
 ## Adding A Tool
 

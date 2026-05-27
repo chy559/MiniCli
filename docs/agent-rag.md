@@ -16,6 +16,20 @@ The codebase RAG feature gives the agent lightweight repository awareness withou
 - `/rag index` scans the current workspace and rebuilds the SQLite index.
 - `/rag search <query>` prints top matching chunks and score components.
 
+## Tools
+
+The same RAG capability is available to the LLM through tools:
+
+```text
+search_code
+index_code
+```
+
+- `search_code` searches the indexed SQLite-backed code chunks and returns formatted context.
+- `index_code` rebuilds the current workspace index before later searches.
+
+Prefer `search_code` when the model needs repository evidence before answering code questions. Use `index_code` when the index is missing, empty, or likely stale.
+
 ## Storage
 
 Default database:
@@ -85,9 +99,15 @@ Additional rules:
 - Code type bonus boosts likely source, test, doc, or config matches based on query words.
 - Same-file limit keeps at most 2 chunks from one file in the final result set.
 
-## Prompt Injection
+## ReAct Flow
 
-`Agent` asks `CodebaseRagService.buildContext(userInput, 5)` for relevant code context on each run. If results exist, they are appended to the same context block as long-term memory before the ReAct system prompt is sent to the LLM.
+Normal `Agent.run(...)` does not call `CodebaseRagService.buildContext(...)` before sending the initial prompt. Codebase snippets are not automatically injected into the ReAct system prompt.
+
+RAG enters the flow only when:
+
+- the user runs `/rag search <query>` from the CLI
+- the model calls `search_code`
+- the model or user triggers `index_code` / `/rag index` to rebuild the index
 
 Do not confuse codebase RAG with long-term memory:
 

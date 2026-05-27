@@ -3,4 +3,6 @@ E:\spring_projects\Cli\src\test\java\com\example\miniagent\cli\CommandParserTest
 E:\spring_projects\Cli\src\test\java\com\example\miniagent\memory\MemoryManagerTest.java
 E:\spring_projects\Cli\src\test\java\com\example\miniagent\plan\PlannerAndExecutorTest.java
 E:\spring_projects\Cli\src\test\java\com\example\miniagent\rag\CodebaseRagServiceTest.java
+E:\spring_projects\Cli\src\test\java\com\example\miniagent\tool\CodeRagToolTest.java
+E:\spring_projects\Cli\src\test\java\com\example\miniagent\tool\SaveMemoryToolTest.java
 E:\spring_projects\Cli\src\test\java\com\example\miniagent\tool\ToolRegistryTest.java

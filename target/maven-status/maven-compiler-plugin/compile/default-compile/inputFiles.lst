@@ -38,8 +38,11 @@ E:\spring_projects\Cli\src\main\java\com\example\miniagent\rag\LocalHashEmbeddin
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\rag\RagSearchResult.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\rag\VectorJsonCodec.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\ExecuteCommandTool.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\IndexCodeTool.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\ListDirTool.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\ReadFileTool.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\SaveMemoryTool.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\SearchCodeTool.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\Tool.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\ToolExecutionResult.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\ToolRegistry.java

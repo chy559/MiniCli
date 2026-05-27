@@ -24,6 +24,8 @@ Writes happen through `MemoryManager`:
 
 Tool results are truncated before entering short-term memory. Keep this behavior unless a more robust summarizer is introduced.
 
+Short-term memory and the LLM-facing `conversationHistory` are separate structures. User input is written to short-term memory, but the model mainly receives the active `conversationHistory` built inside `Agent.runWithInstruction(...)`. Short-term memory is used for status, compression, and bounded tool-result recording; it is not automatically replayed into prompts.
+
 ## Short-Term Compression
 
 Compression is triggered when:
@@ -68,6 +70,7 @@ Long-term memory is explicit. It is saved only through:
 
 ```text
 /save <fact>
+save_memory tool, when the user explicitly asks the CLI to remember a stable fact
 ```
 
 Default file path:
@@ -82,6 +85,8 @@ Do not auto-save:
 - temporary execution steps
 - tool results
 - ordinary chat turns
+
+The `save_memory` tool does not loosen this rule. It exists so the model can honor natural-language requests such as "remember that I prefer concise Chinese answers" without requiring the user to type `/save`.
 
 Long-term memory should represent stable facts, user preferences, coding conventions, and durable project notes.
 
@@ -100,6 +105,8 @@ current query
 ```
 
 The current ReAct path asks for top 3 facts.
+
+Long-term memory retrieval is the memory layer that is injected into the ReAct system prompt. This is different from short-term memory storage and different from codebase RAG.
 
 ## Important Distinction
 

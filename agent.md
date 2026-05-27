@@ -48,6 +48,7 @@ Only `MINI_AGENT_API_KEY` is required. The other two have defaults.
 
 - Keep `Agent`, `PlanExecuteAgent`, `MemoryManager`, `ToolRegistry`, and prompt assembly responsibilities separate.
 - Do not auto-save long-term memory. Long-term memory is explicit through `/save <fact>`.
+- The `save_memory` tool may save long-term memory only when the user explicitly asks the CLI to remember a stable fact.
 - Do not mix short-term memory compression with LLM conversation history compression; they solve different problems.
 - All tool execution must go through `ToolRegistry`.
 - Planner output must stay strict JSON and DAG validation must remain fail-fast.
@@ -59,7 +60,7 @@ Only `MINI_AGENT_API_KEY` is required. The other two have defaults.
 - Short-term memory compression uses a Map-Reduce style heuristic summary in `ContextCompressor`.
 - `retainRecentRounds` controls how many recent conversation rounds remain uncompressed in short-term memory.
 - Conversation history sent to the LLM is rebuilt per `Agent.run(...)`; it is not the same object as `ConversationMemory`.
-- Codebase RAG context is retrieved from SQLite and injected into the ReAct system prompt alongside long-term memory context.
+- Codebase RAG is exposed through `/rag search`, `search_code`, and `index_code`; normal ReAct prompt construction does not automatically inject code snippets.
 - Tool results are truncated before entering short-term memory, but raw tool results are still appended to the active ReAct conversation history.
 - Multiple tool calls from one LLM response are executed concurrently with a thread pool and `Future`s; results are returned in the original tool-call order.
 - In plan execution, independent DAG tasks in the same ready batch are executed concurrently with a thread pool and `Future`s.

@@ -21,8 +21,11 @@ import com.example.miniagent.rag.LocalHashEmbeddingModel;
 import com.example.miniagent.rag.RagSearchResult;
 import com.example.miniagent.rag.VectorJsonCodec;
 import com.example.miniagent.tool.ExecuteCommandTool;
+import com.example.miniagent.tool.IndexCodeTool;
 import com.example.miniagent.tool.ListDirTool;
 import com.example.miniagent.tool.ReadFileTool;
+import com.example.miniagent.tool.SaveMemoryTool;
+import com.example.miniagent.tool.SearchCodeTool;
 import com.example.miniagent.tool.ToolRegistry;
 import com.example.miniagent.tool.WriteFileTool;
 
@@ -62,10 +65,13 @@ public class Main {
         toolRegistry.register(new WriteFileTool());
         toolRegistry.register(new ListDirTool());
         toolRegistry.register(new ExecuteCommandTool(Path.of("").toAbsolutePath()));
+        toolRegistry.register(new SaveMemoryTool(memoryManager));
+        toolRegistry.register(new SearchCodeTool(codebaseRagService));
+        toolRegistry.register(new IndexCodeTool(codebaseRagService, workspaceRoot));
 
         PromptRepository promptRepository = new PromptRepository();
         PromptAssembler promptAssembler = new PromptAssembler(promptRepository);
-        Agent agent = new Agent(llmClient, toolRegistry, memoryManager, promptAssembler, codebaseRagService, 8, 12_000);
+        Agent agent = new Agent(llmClient, toolRegistry, memoryManager, promptAssembler, 8, 12_000);
         Planner planner = new Planner(llmClient, promptAssembler);
         PlanExecuteAgent planExecuteAgent = new PlanExecuteAgent(planner, agent);
         CommandParser parser = new CommandParser();
