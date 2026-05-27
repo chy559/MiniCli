@@ -12,6 +12,14 @@ import com.example.miniagent.memory.LongTermMemoryStore;
 import com.example.miniagent.plan.Planner;
 import com.example.miniagent.prompt.PromptAssembler;
 import com.example.miniagent.prompt.PromptRepository;
+import com.example.miniagent.rag.CodebaseIndexer;
+import com.example.miniagent.rag.CodebaseRagService;
+import com.example.miniagent.rag.CodebaseRagStore;
+import com.example.miniagent.rag.HybridCodeRetriever;
+import com.example.miniagent.rag.JiebaTokenizer;
+import com.example.miniagent.rag.LocalHashEmbeddingModel;
+import com.example.miniagent.rag.RagSearchResult;
+import com.example.miniagent.rag.VectorJsonCodec;
 import com.example.miniagent.tool.ExecuteCommandTool;
 import com.example.miniagent.tool.ListDirTool;
 import com.example.miniagent.tool.ReadFileTool;
@@ -27,6 +35,8 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         Path memoryPath = Path.of(System.getProperty("user.home"), ".mini-agent", "memory.json");
+        Path ragPath = Path.of(System.getProperty("user.home"), ".mini-agent", "code-rag.sqlite");
+        Path workspaceRoot = Path.of("").toAbsolutePath();
         LlmClient llmClient = OpenAiCompatibleClient.fromEnvironment();
 
         LongTermMemoryStore longTermMemoryStore = new LongTermMemoryStore(memoryPath);
@@ -39,6 +49,13 @@ public class Main {
                 10_000,
                 2
         );
+        JiebaTokenizer jiebaTokenizer = new JiebaTokenizer();
+        LocalHashEmbeddingModel embeddingModel = new LocalHashEmbeddingModel(jiebaTokenizer);
+        CodebaseRagService codebaseRagService = new CodebaseRagService(
+                new CodebaseIndexer(embeddingModel),
+                new CodebaseRagStore(ragPath, new VectorJsonCodec()),
+                new HybridCodeRetriever(embeddingModel, jiebaTokenizer)
+        );
 
         ToolRegistry toolRegistry = new ToolRegistry();
         toolRegistry.register(new ReadFileTool());
@@ -48,7 +65,7 @@ public class Main {
 
         PromptRepository promptRepository = new PromptRepository();
         PromptAssembler promptAssembler = new PromptAssembler(promptRepository);
-        Agent agent = new Agent(llmClient, toolRegistry, memoryManager, promptAssembler, 8, 12_000);
+        Agent agent = new Agent(llmClient, toolRegistry, memoryManager, promptAssembler, codebaseRagService, 8, 12_000);
         Planner planner = new Planner(llmClient, promptAssembler);
         PlanExecuteAgent planExecuteAgent = new PlanExecuteAgent(planner, agent);
         CommandParser parser = new CommandParser();
@@ -72,6 +89,22 @@ public class Main {
                     case MEMORY_CLEAR -> {
                         memoryManager.clearLongTermMemory();
                         System.out.println("Long-term memory cleared.");
+                    }
+                    case RAG_STATUS -> System.out.println(codebaseRagService.describeStatus());
+                    case RAG_INDEX -> {
+                        int chunks = codebaseRagService.index(workspaceRoot);
+                        System.out.println("Code RAG indexed chunks: " + chunks);
+                    }
+                    case RAG_SEARCH -> {
+                        for (RagSearchResult result : codebaseRagService.search(command.payload(), 5)) {
+                            System.out.printf("%s#chunk-%d score=%.3f semantic=%.3f token=%.3f typeBonus=%.3f%n",
+                                    result.chunk().path(),
+                                    result.chunk().chunkIndex(),
+                                    result.score(),
+                                    result.semanticScore(),
+                                    result.tokenScore(),
+                                    result.typeBonus());
+                        }
                     }
                     case SAVE_MEMORY -> {
                         memoryManager.saveLongTermFact(command.payload());

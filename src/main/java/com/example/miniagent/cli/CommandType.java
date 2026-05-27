@@ -6,5 +6,8 @@ public enum CommandType {
     SAVE_MEMORY,
     MEMORY_STATUS,
     MEMORY_CLEAR,
+    RAG_INDEX,
+    RAG_SEARCH,
+    RAG_STATUS,
     EXIT
 }

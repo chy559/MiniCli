@@ -8,6 +8,7 @@ Mini Agent CLI is a Java 17 + Maven local agent MVP. It has three core tracks:
 
 - ReAct execution for normal user input.
 - Memory with short-term session memory, explicit long-term memory, retrieval, and compression.
+- Codebase RAG with SQLite-backed vector chunks and hybrid retrieval.
 - `/plan` execution that asks the LLM for a JSON plan, builds a DAG, then executes tasks in dependency order.
 
 Main package:
@@ -21,6 +22,7 @@ src/main/java/com/example/miniagent/
 - Architecture and module boundaries: [docs/agent-architecture.md](docs/agent-architecture.md)
 - Prompt and context flow: [docs/agent-prompt-context.md](docs/agent-prompt-context.md)
 - Memory strategy: [docs/agent-memory.md](docs/agent-memory.md)
+- Codebase RAG strategy: [docs/agent-rag.md](docs/agent-rag.md)
 - Tools and execution behavior: [docs/agent-tools.md](docs/agent-tools.md)
 - Testing and maintenance rules: [docs/agent-testing-maintenance.md](docs/agent-testing-maintenance.md)
 - Original product design: [docs/design.md](docs/design.md)
@@ -57,6 +59,7 @@ Only `MINI_AGENT_API_KEY` is required. The other two have defaults.
 - Short-term memory compression uses a Map-Reduce style heuristic summary in `ContextCompressor`.
 - `retainRecentRounds` controls how many recent conversation rounds remain uncompressed in short-term memory.
 - Conversation history sent to the LLM is rebuilt per `Agent.run(...)`; it is not the same object as `ConversationMemory`.
+- Codebase RAG context is retrieved from SQLite and injected into the ReAct system prompt alongside long-term memory context.
 - Tool results are truncated before entering short-term memory, but raw tool results are still appended to the active ReAct conversation history.
 - Multiple tool calls from one LLM response are executed concurrently with a thread pool and `Future`s; results are returned in the original tool-call order.
 - In plan execution, independent DAG tasks in the same ready batch are executed concurrently with a thread pool and `Future`s.

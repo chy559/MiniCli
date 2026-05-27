@@ -18,10 +18,12 @@ base ReAct system prompt
 
 relevant long-term memory, if any
 
+relevant codebase RAG context, if indexed and matching
+
 override instruction, only for plan task execution
 ```
 
-Important: short-term `ConversationMemory` is not dumped into every LLM call. The active `conversationHistory` is a per-run ReAct message list.
+Important: short-term `ConversationMemory` is not dumped into every LLM call. The active `conversationHistory` is a per-run ReAct message list. Codebase RAG context is retrieved separately from SQLite-backed chunks.
 
 ## Tool Loop Context
 

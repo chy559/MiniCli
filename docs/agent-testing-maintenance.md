@@ -20,6 +20,7 @@ Run it after behavior changes. For docs-only changes, tests are optional, but me
 - Prefer stub `LlmClient` implementations over live model calls.
 - Test behavior at module boundaries.
 - For memory changes, assert both the retained raw entries and the generated summary entry.
+- For RAG changes, test SQLite persistence, retrieval scoring behavior, and same-file limiting.
 - For planner changes, test malformed JSON, dependency validation, and cycle detection.
 - For tools, test failure returns as data rather than thrown exceptions when routed through `ToolRegistry`.
 - For concurrency changes, test both concurrent overlap and deterministic externally visible ordering.

@@ -58,6 +58,13 @@ Main
 - `MemoryRetriever` performs keyword retrieval.
 - `ContextCompressor` performs heuristic compression.
 
+`rag`
+
+- `CodebaseRagService` is the facade for indexing, searching, status, and prompt context formatting.
+- `CodebaseRagStore` persists chunks and JSON vectors in SQLite.
+- `CodebaseIndexer` walks and chunks repository files.
+- `HybridCodeRetriever` performs cosine baseline retrieval, token weighting, code type bonus, and same-file limiting.
+
 `prompt`
 
 - `PromptRepository` stores prompt text.

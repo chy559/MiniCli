@@ -27,6 +27,16 @@ E:\spring_projects\Cli\src\main\java\com\example\miniagent\plan\TaskStatus.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\plan\TaskType.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\prompt\PromptAssembler.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\prompt\PromptRepository.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\rag\CodebaseIndexer.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\rag\CodebaseRagService.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\rag\CodebaseRagStore.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\rag\CodeChunk.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\rag\CodeType.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\rag\HybridCodeRetriever.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\rag\JiebaTokenizer.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\rag\LocalHashEmbeddingModel.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\rag\RagSearchResult.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\rag\VectorJsonCodec.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\ExecuteCommandTool.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\ListDirTool.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\ReadFileTool.java

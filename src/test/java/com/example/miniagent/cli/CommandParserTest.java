@@ -28,4 +28,14 @@ class CommandParserTest {
         assertEquals(CommandType.DEFAULT_INPUT, command.type());
         assertEquals("hello", command.payload());
     }
+
+    @Test
+    void shouldParseRagCommands() {
+        assertEquals(CommandType.RAG_STATUS, parser.parse("/rag").type());
+        assertEquals(CommandType.RAG_INDEX, parser.parse("/rag index").type());
+
+        CliCommand search = parser.parse("/rag search memory compression");
+        assertEquals(CommandType.RAG_SEARCH, search.type());
+        assertEquals("memory compression", search.payload());
+    }
 }
