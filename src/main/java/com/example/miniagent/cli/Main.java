@@ -4,6 +4,9 @@ import com.example.miniagent.agent.Agent;
 import com.example.miniagent.agent.PlanExecuteAgent;
 import com.example.miniagent.llm.LlmClient;
 import com.example.miniagent.llm.OpenAiCompatibleClient;
+import com.example.miniagent.mcp.McpConfigLoader;
+import com.example.miniagent.mcp.McpToolProvider;
+import com.example.miniagent.mcp.StdioMcpClient;
 import com.example.miniagent.memory.MemoryManager;
 import com.example.miniagent.memory.MemoryRetriever;
 import com.example.miniagent.memory.ConversationMemory;
@@ -21,11 +24,14 @@ import com.example.miniagent.rag.LocalHashEmbeddingModel;
 import com.example.miniagent.rag.RagSearchResult;
 import com.example.miniagent.rag.VectorJsonCodec;
 import com.example.miniagent.tool.ExecuteCommandTool;
+import com.example.miniagent.tool.ConsoleToolApprovalHandler;
+import com.example.miniagent.tool.HitlToolRegistry;
 import com.example.miniagent.tool.IndexCodeTool;
 import com.example.miniagent.tool.ListDirTool;
 import com.example.miniagent.tool.ReadFileTool;
 import com.example.miniagent.tool.SaveMemoryTool;
 import com.example.miniagent.tool.SearchCodeTool;
+import com.example.miniagent.tool.Tool;
 import com.example.miniagent.tool.ToolRegistry;
 import com.example.miniagent.tool.WriteFileTool;
 
@@ -39,6 +45,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Path memoryPath = Path.of(System.getProperty("user.home"), ".mini-agent", "memory.json");
         Path ragPath = Path.of(System.getProperty("user.home"), ".mini-agent", "code-rag.sqlite");
+        Path mcpPath = Path.of(System.getProperty("user.home"), ".mini-agent", "mcp.json");
         Path workspaceRoot = Path.of("").toAbsolutePath();
         LlmClient llmClient = OpenAiCompatibleClient.fromEnvironment();
 
@@ -60,24 +67,27 @@ public class Main {
                 new HybridCodeRetriever(embeddingModel, jiebaTokenizer)
         );
 
-        ToolRegistry toolRegistry = new ToolRegistry();
-        toolRegistry.register(new ReadFileTool());
-        toolRegistry.register(new WriteFileTool());
-        toolRegistry.register(new ListDirTool());
-        toolRegistry.register(new ExecuteCommandTool(Path.of("").toAbsolutePath()));
-        toolRegistry.register(new SaveMemoryTool(memoryManager));
-        toolRegistry.register(new SearchCodeTool(codebaseRagService));
-        toolRegistry.register(new IndexCodeTool(codebaseRagService, workspaceRoot));
-
-        PromptRepository promptRepository = new PromptRepository();
-        PromptAssembler promptAssembler = new PromptAssembler(promptRepository);
-        Agent agent = new Agent(llmClient, toolRegistry, memoryManager, promptAssembler, 8, 12_000);
-        Planner planner = new Planner(llmClient, promptAssembler);
-        PlanExecuteAgent planExecuteAgent = new PlanExecuteAgent(planner, agent);
-        CommandParser parser = new CommandParser();
-
         System.out.println("Mini Agent CLI started. Type /exit to quit.");
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
+            ToolRegistry toolRegistry = new HitlToolRegistry(new ConsoleToolApprovalHandler(reader, System.out));
+            toolRegistry.register(new ReadFileTool());
+            toolRegistry.register(new WriteFileTool());
+            toolRegistry.register(new ListDirTool());
+            toolRegistry.register(new ExecuteCommandTool(Path.of("").toAbsolutePath()));
+            toolRegistry.register(new SaveMemoryTool(memoryManager));
+            toolRegistry.register(new SearchCodeTool(codebaseRagService));
+            toolRegistry.register(new IndexCodeTool(codebaseRagService, workspaceRoot));
+            for (Tool tool : new McpToolProvider(StdioMcpClient::new).loadTools(new McpConfigLoader().load(mcpPath))) {
+                toolRegistry.register(tool);
+            }
+
+            PromptRepository promptRepository = new PromptRepository();
+            PromptAssembler promptAssembler = new PromptAssembler(promptRepository);
+            Agent agent = new Agent(llmClient, toolRegistry, memoryManager, promptAssembler, 8, 12_000);
+            Planner planner = new Planner(llmClient, promptAssembler);
+            PlanExecuteAgent planExecuteAgent = new PlanExecuteAgent(planner, agent);
+            CommandParser parser = new CommandParser();
+
             while (true) {
                 System.out.print("> ");
                 String line = reader.readLine();

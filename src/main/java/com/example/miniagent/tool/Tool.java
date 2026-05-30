@@ -13,6 +13,10 @@ public interface Tool {
 
     ToolResult execute(Map<String, Object> args);
 
+    default ToolPermission permission() {
+        return ToolPermission.WRITE;
+    }
+
     default ToolDefinition definition() {
         return new ToolDefinition(name(), description(), inputSchema());
     }

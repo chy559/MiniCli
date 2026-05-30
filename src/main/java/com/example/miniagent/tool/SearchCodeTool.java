@@ -69,4 +69,9 @@ public class SearchCodeTool implements Tool {
     private int clamp(int value) {
         return Math.max(1, Math.min(10, value));
     }
+
+    @Override
+    public ToolPermission permission() {
+        return ToolPermission.READ_ONLY;
+    }
 }

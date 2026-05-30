@@ -6,6 +6,15 @@ All tool execution must go through `ToolRegistry`.
 
 Do not call tool implementations directly from `Agent`, `Planner`, or `PlanExecuteAgent`.
 
+At runtime, `Main` uses `HitlToolRegistry`, a subclass of `ToolRegistry`. It intercepts tool calls before execution:
+
+```text
+READ_ONLY tool -> execute directly
+WRITE / EXECUTE / EXTERNAL tool -> ask for user approval
+```
+
+Approval is serial so the CLI prompt stays readable. Approved calls are then delegated back to `ToolRegistry` and can still execute concurrently.
+
 ## Current Tools
 
 Registered in `Main`:
@@ -59,6 +68,25 @@ This means the current ReAct loop can still reason from the full observation, wh
 `save_memory` is the exception that intentionally writes long-term memory. It should be called only when the user explicitly asks the CLI to remember a stable fact, preference, or project convention.
 
 `search_code` and `index_code` are RAG tools. `search_code` reads from the SQLite-backed code index; `index_code` rebuilds that index for the current workspace.
+
+MCP tools are loaded dynamically from `~/.mini-agent/mcp.json` at startup. They are still ordinary `Tool` instances once registered, and their names are prefixed as `mcp_<server>_<tool>` to avoid collisions.
+
+## Tool Permissions
+
+Each `Tool` has a `ToolPermission`; the default is `WRITE` so new tools require approval unless explicitly marked safe.
+
+Current permissions:
+
+- `read_file`: `READ_ONLY`
+- `list_dir`: `READ_ONLY`
+- `search_code`: `READ_ONLY`
+- `write_file`: `WRITE`
+- `save_memory`: `WRITE`
+- `index_code`: `WRITE`
+- `execute_command`: `EXECUTE`
+- MCP tools: `EXTERNAL`
+
+If a non-read-only tool is denied, the registry returns a failed `ToolResult` to the model instead of throwing or stopping the agent.
 
 ## Adding A Tool
 

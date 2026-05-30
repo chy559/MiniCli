@@ -20,6 +20,10 @@ public class ToolRegistry {
         tools.put(tool.name(), tool);
     }
 
+    protected Tool findTool(String name) {
+        return tools.get(name);
+    }
+
     public List<ToolDefinition> getToolDefinitions() {
         return tools.values().stream().map(Tool::definition).toList();
     }
@@ -57,7 +61,7 @@ public class ToolRegistry {
 
     private Callable<ToolExecutionResult> executeTool(ToolCall toolCall) {
         return () -> {
-            Tool tool = tools.get(toolCall.name());
+            Tool tool = findTool(toolCall.name());
             if (tool == null) {
                 return new ToolExecutionResult(toolCall.id(), toolCall.name(), new ToolResult(toolCall.name(), "Unknown tool: " + toolCall.name(), false));
             }

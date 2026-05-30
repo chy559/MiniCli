@@ -39,4 +39,9 @@ public class ListDirTool implements Tool {
             return new ToolResult(name(), "Failed to list directory: " + e.getMessage(), false);
         }
     }
+
+    @Override
+    public ToolPermission permission() {
+        return ToolPermission.READ_ONLY;
+    }
 }

@@ -1,6 +1,11 @@
+com\example\miniagent\mcp\McpToolProviderTest.class
+com\example\miniagent\tool\HitlToolRegistryTest$FakeTool.class
+com\example\miniagent\tool\HitlToolRegistryTest.class
 com\example\miniagent\agent\AgentTest.class
+com\example\miniagent\plan\PlannerAndExecutorTest.class
+com\example\miniagent\cli\CommandParserTest.class
+com\example\miniagent\mcp\McpToolProviderTest$FakeMcpClient.class
 com\example\miniagent\agent\AgentTest$StubLlmClient.class
 com\example\miniagent\plan\PlannerAndExecutorTest$QueueLlmClient.class
-com\example\miniagent\plan\PlannerAndExecutorTest.class
+com\example\miniagent\mcp\McpConfigLoaderTest.class
 com\example\miniagent\memory\MemoryManagerTest.class
-com\example\miniagent\cli\CommandParserTest.class

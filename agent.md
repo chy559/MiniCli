@@ -23,6 +23,7 @@ src/main/java/com/example/miniagent/
 - Prompt and context flow: [docs/agent-prompt-context.md](docs/agent-prompt-context.md)
 - Memory strategy: [docs/agent-memory.md](docs/agent-memory.md)
 - Codebase RAG strategy: [docs/agent-rag.md](docs/agent-rag.md)
+- MCP integration: [docs/agent-mcp.md](docs/agent-mcp.md)
 - Tools and execution behavior: [docs/agent-tools.md](docs/agent-tools.md)
 - Testing and maintenance rules: [docs/agent-testing-maintenance.md](docs/agent-testing-maintenance.md)
 - Original product design: [docs/design.md](docs/design.md)
@@ -51,9 +52,10 @@ Only `MINI_AGENT_API_KEY` is required. The other two have defaults.
 - The `save_memory` tool may save long-term memory only when the user explicitly asks the CLI to remember a stable fact.
 - Do not mix short-term memory compression with LLM conversation history compression; they solve different problems.
 - All tool execution must go through `ToolRegistry`.
+- Runtime tool execution uses `HitlToolRegistry`; only `READ_ONLY` tools bypass approval.
 - Planner output must stay strict JSON and DAG validation must remain fail-fast.
 - Prefer focused unit tests for behavior changes. Run `mvn test` before handing off.
-- When behavior changes, update this file or the focused `docs/agent-*.md` files so future agents see the current rules.
+- When behavior changes, update `README.md`, this file, and any focused `docs/agent-*.md` files so users and future agents see the current rules.
 
 ## Known Current Details
 
@@ -61,6 +63,8 @@ Only `MINI_AGENT_API_KEY` is required. The other two have defaults.
 - `retainRecentRounds` controls how many recent conversation rounds remain uncompressed in short-term memory.
 - Conversation history sent to the LLM is rebuilt per `Agent.run(...)`; it is not the same object as `ConversationMemory`.
 - Codebase RAG is exposed through `/rag search`, `search_code`, and `index_code`; normal ReAct prompt construction does not automatically inject code snippets.
+- MCP servers can contribute dynamic tools from `~/.mini-agent/mcp.json`; they are registered through `ToolRegistry` with `mcp_<server>_<tool>` names.
 - Tool results are truncated before entering short-term memory, but raw tool results are still appended to the active ReAct conversation history.
+- HITL approval is serial before execution; approved calls still reuse concurrent tool execution.
 - Multiple tool calls from one LLM response are executed concurrently with a thread pool and `Future`s; results are returned in the original tool-call order.
 - In plan execution, independent DAG tasks in the same ready batch are executed concurrently with a thread pool and `Future`s.

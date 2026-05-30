@@ -34,4 +34,9 @@ public class ReadFileTool implements Tool {
             return new ToolResult(name(), "Failed to read file: " + e.getMessage(), false);
         }
     }
+
+    @Override
+    public ToolPermission permission() {
+        return ToolPermission.READ_ONLY;
+    }
 }

@@ -53,4 +53,9 @@ public class ExecuteCommandTool implements Tool {
             return new ToolResult(name(), "Failed to execute command: " + e.getMessage(), false);
         }
     }
+
+    @Override
+    public ToolPermission permission() {
+        return ToolPermission.EXECUTE;
+    }
 }
