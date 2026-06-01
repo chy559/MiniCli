@@ -166,6 +166,23 @@ RAG 不会在每次普通 ReAct 前自动检索并注入代码片段。它通过
 
 MCP 工具会以 `mcp_<server>_<tool>` 的名字注册进 `ToolRegistry`。
 
+也支持 Streamable HTTP MCP server：
+
+```json
+{
+  "servers": [
+    {
+      "name": "remote",
+      "transport": "streamable_http",
+      "url": "https://example.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${MCP_TOKEN}"
+      }
+    }
+  ]
+}
+```
+
 ## 说明
 
 这一版优先保证结构清晰和可测试：

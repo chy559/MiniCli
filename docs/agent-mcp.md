@@ -36,7 +36,24 @@ Example:
 }
 ```
 
-Only `stdio` transport is implemented in this MVP. Environment values like `${GITHUB_TOKEN}` are expanded from the process environment.
+`stdio` and `streamable_http` transports are implemented. Environment values like `${GITHUB_TOKEN}` are expanded from the process environment.
+
+Streamable HTTP example:
+
+```json
+{
+  "servers": [
+    {
+      "name": "remote",
+      "transport": "streamable_http",
+      "url": "https://example.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${MCP_TOKEN}"
+      }
+    }
+  ]
+}
+```
 
 ## Startup Flow
 
@@ -45,8 +62,10 @@ Only `stdio` transport is implemented in this MVP. Environment values like `${GI
 ```text
 McpConfigLoader.load
   -> McpToolProvider.loadTools
-  -> StdioMcpClient.initialize
-  -> StdioMcpClient.listTools
+  -> DefaultMcpClientFactory
+  -> StdioMcpClient or StreamableHttpMcpClient
+  -> JsonRpcMcpClient.initialize
+  -> JsonRpcMcpClient.listTools
   -> McpToolAdapter
   -> ToolRegistry.register
 ```
@@ -78,7 +97,12 @@ Agent
   -> StdioMcpClient.callTool
 ```
 
-`StdioMcpClient` uses MCP JSON-RPC framing over stdio and supports:
+`JsonRpcMcpClient` owns the MCP methods and delegates wire-level communication to a transport strategy:
+
+- `StdioMcpTransport`: MCP JSON-RPC framing over process stdio
+- `StreamableHttpMcpTransport`: MCP Streamable HTTP using OkHttp
+
+Both transports support:
 
 - `initialize`
 - `notifications/initialized`

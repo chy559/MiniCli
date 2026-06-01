@@ -4,9 +4,9 @@ import com.example.miniagent.agent.Agent;
 import com.example.miniagent.agent.PlanExecuteAgent;
 import com.example.miniagent.llm.LlmClient;
 import com.example.miniagent.llm.OpenAiCompatibleClient;
+import com.example.miniagent.mcp.DefaultMcpClientFactory;
 import com.example.miniagent.mcp.McpConfigLoader;
 import com.example.miniagent.mcp.McpToolProvider;
-import com.example.miniagent.mcp.StdioMcpClient;
 import com.example.miniagent.memory.MemoryManager;
 import com.example.miniagent.memory.MemoryRetriever;
 import com.example.miniagent.memory.ConversationMemory;
@@ -77,7 +77,7 @@ public class Main {
             toolRegistry.register(new SaveMemoryTool(memoryManager));
             toolRegistry.register(new SearchCodeTool(codebaseRagService));
             toolRegistry.register(new IndexCodeTool(codebaseRagService, workspaceRoot));
-            for (Tool tool : new McpToolProvider(StdioMcpClient::new).loadTools(new McpConfigLoader().load(mcpPath))) {
+            for (Tool tool : new McpToolProvider(new DefaultMcpClientFactory()).loadTools(new McpConfigLoader().load(mcpPath))) {
                 toolRegistry.register(tool);
             }
 

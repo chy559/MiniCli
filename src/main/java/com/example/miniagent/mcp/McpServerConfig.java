@@ -10,15 +10,22 @@ public record McpServerConfig(
         String transport,
         String command,
         List<String> args,
-        Map<String, String> env
+        Map<String, String> env,
+        String url,
+        Map<String, String> headers
 ) {
     public McpServerConfig {
         args = args == null ? List.of() : List.copyOf(args);
         env = env == null ? Map.of() : Map.copyOf(env);
+        headers = headers == null ? Map.of() : Map.copyOf(headers);
     }
 
     public static McpServerConfig stdio(String name, String command, List<String> args, Map<String, String> env) {
-        return new McpServerConfig(name, "stdio", command, args, env);
+        return new McpServerConfig(name, "stdio", command, args, env, null, Map.of());
+    }
+
+    public static McpServerConfig streamableHttp(String name, String url, Map<String, String> headers) {
+        return new McpServerConfig(name, "streamable_http", null, List.of(), Map.of(), url, headers);
     }
 
     public List<String> commandLine() {
@@ -31,6 +38,12 @@ public record McpServerConfig(
     public Map<String, String> expandedEnv() {
         Map<String, String> values = new HashMap<>();
         env.forEach((key, value) -> values.put(key, expandEnvReference(value)));
+        return values;
+    }
+
+    public Map<String, String> expandedHeaders() {
+        Map<String, String> values = new HashMap<>();
+        headers.forEach((key, value) -> values.put(key, expandEnvReference(value)));
         return values;
     }
 

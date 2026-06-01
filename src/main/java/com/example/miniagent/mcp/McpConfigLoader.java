@@ -24,6 +24,12 @@ public class McpConfigLoader {
             for (JsonNode server : root.path("servers")) {
                 String name = server.path("name").asText();
                 String transport = server.path("transport").asText("stdio");
+                if (isStreamableHttp(transport)) {
+                    Map<String, String> headers = new HashMap<>();
+                    server.path("headers").fields().forEachRemaining(entry -> headers.put(entry.getKey(), entry.getValue().asText()));
+                    configs.add(McpServerConfig.streamableHttp(name, server.path("url").asText(), headers));
+                    continue;
+                }
                 if (!"stdio".equalsIgnoreCase(transport)) {
                     continue;
                 }
@@ -39,5 +45,11 @@ public class McpConfigLoader {
         } catch (IOException e) {
             throw new IllegalStateException("Failed to load MCP config: " + configPath, e);
         }
+    }
+
+    private boolean isStreamableHttp(String transport) {
+        return "streamable_http".equalsIgnoreCase(transport)
+                || "streamable-http".equalsIgnoreCase(transport)
+                || "http".equalsIgnoreCase(transport);
     }
 }

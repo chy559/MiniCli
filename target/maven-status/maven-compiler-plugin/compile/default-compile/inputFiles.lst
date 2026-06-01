@@ -11,6 +11,8 @@ E:\spring_projects\Cli\src\main\java\com\example\miniagent\llm\OpenAiCompatibleC
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\llm\Role.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\llm\ToolCall.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\llm\ToolDefinition.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\mcp\DefaultMcpClientFactory.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\mcp\JsonRpcMcpClient.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\mcp\McpClient.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\mcp\McpClientFactory.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\mcp\McpConfigLoader.java
@@ -18,7 +20,11 @@ E:\spring_projects\Cli\src\main\java\com\example\miniagent\mcp\McpServerConfig.j
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\mcp\McpToolAdapter.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\mcp\McpToolMetadata.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\mcp\McpToolProvider.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\mcp\McpTransport.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\mcp\StdioMcpClient.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\mcp\StdioMcpTransport.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\mcp\StreamableHttpMcpClient.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\mcp\StreamableHttpMcpTransport.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\memory\ContextCompressor.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\memory\ConversationMemory.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\memory\LongTermMemoryFact.java

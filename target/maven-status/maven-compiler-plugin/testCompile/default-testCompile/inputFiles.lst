@@ -1,7 +1,9 @@
 E:\spring_projects\Cli\src\test\java\com\example\miniagent\agent\AgentTest.java
 E:\spring_projects\Cli\src\test\java\com\example\miniagent\cli\CommandParserTest.java
+E:\spring_projects\Cli\src\test\java\com\example\miniagent\mcp\DefaultMcpClientFactoryTest.java
 E:\spring_projects\Cli\src\test\java\com\example\miniagent\mcp\McpConfigLoaderTest.java
 E:\spring_projects\Cli\src\test\java\com\example\miniagent\mcp\McpToolProviderTest.java
+E:\spring_projects\Cli\src\test\java\com\example\miniagent\mcp\StreamableHttpMcpTransportTest.java
 E:\spring_projects\Cli\src\test\java\com\example\miniagent\memory\MemoryManagerTest.java
 E:\spring_projects\Cli\src\test\java\com\example\miniagent\plan\PlannerAndExecutorTest.java
 E:\spring_projects\Cli\src\test\java\com\example\miniagent\rag\CodebaseRagServiceTest.java
