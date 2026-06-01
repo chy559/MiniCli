@@ -18,7 +18,7 @@ public class SearchCodeTool implements Tool {
 
     @Override
     public String description() {
-        return "Search the indexed codebase RAG store for relevant files or code snippets.";
+        return "Fuzzy semantic search over the indexed codebase RAG store. Prefer glob, grep, and read for exact file discovery, symbols, strings, and line-level evidence; use this only when fuzzy semantic matching is useful.";
     }
 
     @Override

@@ -23,6 +23,9 @@
 - `/rag search <query>`
 - `/exit`
 - 基础工具：
+  - `glob`
+  - `grep`
+  - `read`
   - `read_file`
   - `write_file`
   - `list_dir`
@@ -137,6 +140,14 @@ RAG 不会在每次普通 ReAct 前自动检索并注入代码片段。它通过
 - `search_code` tool
 - `/rag index`
 - `index_code` tool
+
+代码库场景下优先使用精确工具：
+
+- `glob`：按文件名 / 路径模式找文件
+- `grep`：按符号、字符串、正则查找精确命中
+- `read`：读取目标文件或行范围
+
+`search_code` 是模糊语义检索，只适合在不知道精确符号、文件名或字符串时补充使用。
 
 ## MCP 配置
 

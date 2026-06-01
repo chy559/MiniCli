@@ -69,6 +69,14 @@ This means the current ReAct loop can still reason from the full observation, wh
 
 `search_code` and `index_code` are RAG tools. `search_code` reads from the SQLite-backed code index; `index_code` rebuilds that index for the current workspace.
 
+Codebase navigation should prefer exact local tools before semantic retrieval:
+
+- `glob`: find files by path/name pattern
+- `grep`: search symbols, strings, and regex matches
+- `read`: inspect exact file content and line ranges
+
+`search_code` is fuzzy semantic RAG over the indexed codebase. It should be used as a fallback when exact file names, symbols, or strings are unknown.
+
 MCP tools are loaded dynamically from `~/.mini-agent/mcp.json` at startup. They are still ordinary `Tool` instances once registered, and their names are prefixed as `mcp_<server>_<tool>` to avoid collisions.
 
 ## Tool Permissions

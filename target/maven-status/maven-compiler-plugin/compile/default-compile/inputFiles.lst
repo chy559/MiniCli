@@ -53,10 +53,13 @@ E:\spring_projects\Cli\src\main\java\com\example\miniagent\rag\RagSearchResult.j
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\rag\VectorJsonCodec.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\ConsoleToolApprovalHandler.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\ExecuteCommandTool.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\GlobTool.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\GrepTool.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\HitlToolRegistry.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\IndexCodeTool.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\ListDirTool.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\ReadFileTool.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\ReadTool.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\SaveMemoryTool.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\SearchCodeTool.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\Tool.java
@@ -65,4 +68,5 @@ E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\ToolExecutionRes
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\ToolPermission.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\ToolRegistry.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\ToolResult.java
+E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\WorkspacePathResolver.java
 E:\spring_projects\Cli\src\main\java\com\example\miniagent\tool\WriteFileTool.java

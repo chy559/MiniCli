@@ -24,10 +24,13 @@ import com.example.miniagent.rag.LocalHashEmbeddingModel;
 import com.example.miniagent.rag.RagSearchResult;
 import com.example.miniagent.rag.VectorJsonCodec;
 import com.example.miniagent.tool.ExecuteCommandTool;
+import com.example.miniagent.tool.GlobTool;
+import com.example.miniagent.tool.GrepTool;
 import com.example.miniagent.tool.ConsoleToolApprovalHandler;
 import com.example.miniagent.tool.HitlToolRegistry;
 import com.example.miniagent.tool.IndexCodeTool;
 import com.example.miniagent.tool.ListDirTool;
+import com.example.miniagent.tool.ReadTool;
 import com.example.miniagent.tool.ReadFileTool;
 import com.example.miniagent.tool.SaveMemoryTool;
 import com.example.miniagent.tool.SearchCodeTool;
@@ -71,6 +74,9 @@ public class Main {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             ToolRegistry toolRegistry = new HitlToolRegistry(new ConsoleToolApprovalHandler(reader, System.out));
             toolRegistry.register(new ReadFileTool());
+            toolRegistry.register(new ReadTool(workspaceRoot));
+            toolRegistry.register(new GlobTool(workspaceRoot));
+            toolRegistry.register(new GrepTool(workspaceRoot));
             toolRegistry.register(new WriteFileTool());
             toolRegistry.register(new ListDirTool());
             toolRegistry.register(new ExecuteCommandTool(Path.of("").toAbsolutePath()));
